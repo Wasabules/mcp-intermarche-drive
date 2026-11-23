@@ -244,7 +244,8 @@ would act on a real basket. Run `self_test` locally instead.
 
 Cut a release with `npm version minor && git push --follow-tags`. Install one with
 `npm install -g <tarball URL from the release>` and check it with
-`gh attestation verify <tarball> --repo Wasabules/mcp-intermarche-drive`.
+`gh attestation verify <tarball> --repo Wasabules/mcp-intermarche-drive` (gh 2.49 or later; with an older gh,
+`gh api repos/Wasabules/mcp-intermarche-drive/attestations/sha256:<digest>` at least shows the SLSA provenance for that digest).
 
 ## Development and verification
 
