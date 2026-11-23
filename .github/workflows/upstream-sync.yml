@@ -101,10 +101,17 @@ jobs:
           fetch-depth: 0
       - name: Open a pull request, or an issue on conflict
         run: |
-          gh label create upstream-sync --color 0E8A16 --description "Synchronisation avec le projet d'origine" 2>/dev/null || true
-          if [ -n "$(gh pr list --state open --label upstream-sync --json number --jq '.[].number')" ] \
-             || [ -n "$(gh issue list --state open --label upstream-sync --json number --jq '.[].number')" ]; then
-            echo "Une synchronisation est déjà ouverte : rien à faire."
+          repo="$GITHUB_REPOSITORY"
+          # REST only: GraphQL lookups (gh pr create --label, gh pr list --label) lag behind a label
+          # created a second earlier. Duplicates are detected by branch prefix, not by label.
+          gh label create upstream-sync --repo "$repo" --color 0E8A16 \
+            --description "Synchronisation avec le projet d'origine" 2>/dev/null || true
+          open_prs=$(gh api "repos/$repo/pulls?state=open&per_page=100" \
+            --jq '[.[] | select(.head.ref | startswith("upstream-sync/"))] | length')
+          open_issues=$(gh api "repos/$repo/issues?state=open&labels=upstream-sync&per_page=100" \
+            --jq '[.[] | select(.pull_request == null)] | length')
+          if [ "$open_prs" != "0" ] || [ "$open_issues" != "0" ]; then
+            echo "Une synchronisation est déjà ouverte ($open_prs PR, $open_issues ticket) : rien à faire."
             exit 0
           fi
           git remote add upstream "$UPSTREAM_URL"
@@ -114,7 +121,8 @@ jobs:
             # shellcheck disable=SC2016 # the backticks are Markdown code, not command substitution
             printf 'Le projet d'"'"'origine a %s nouveau(x) commit(s) qui entrent en conflit avec ce fork.\n\n%s\n\nÀ fusionner à la main : `git fetch upstream && git merge upstream/%s`, puis `npm test`, `npm run smoke` et un `self_test` en réel.\n\nDétection : %s\n' \
               "$BEHIND" "$commits" "$UPSTREAM_BRANCH" "$RUN_URL" > body.md
-            gh issue create --title "Upstream : $BEHIND commit(s) en conflit ($UPSTREAM_SHA)" --body-file body.md --label upstream-sync
+            gh api "repos/$repo/issues" -f title="Upstream : $BEHIND commit(s) en conflit ($UPSTREAM_SHA)" \
+              -F body=@body.md -f "labels[]=upstream-sync" --jq .html_url
             exit 0
           fi
           branch="upstream-sync/$BASE/$UPSTREAM_SHA"
@@ -122,9 +130,14 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "$branch"
           git merge --no-ff --no-edit "upstream/$UPSTREAM_BRANCH"
-          git push origin "$branch"
+          # The upstream-sync/* namespace belongs to this workflow: overwrite what an interrupted run left.
+          git push --force origin "$branch"
           if [ "$TEST_RESULT" = "success" ]; then verdict="✅ typage, tests et smoke test passent sur la fusion"; else verdict="❌ la suite échoue sur la fusion : voir les journaux"; fi
           # shellcheck disable=SC2016 # the backticks are Markdown code, not command substitution
           printf '%s nouveau(x) commit(s) du projet d'"'"'origine.\n\n%s\n\n**Tests :** %s (%s).\n\nUne PR ouverte par GitHub Actions ne relance pas la CI : les tests ci-dessus ont tourné dans ce workflow, sur cette fusion exacte.\n\nAvant de fusionner : relire le diff, puis lancer `self_test` en réel après `/mcp` → Reconnect.\n' \
             "$BEHIND" "$commits" "$verdict" "$RUN_URL" > body.md
-          gh pr create --base "$BASE" --head "$branch" --title "Sync upstream : $BEHIND commit(s) ($UPSTREAM_SHA)" --body-file body.md --label upstream-sync
+          number=$(gh api "repos/$repo/pulls" -f base="$BASE" -f head="$branch" \
+            -f title="Sync upstream : $BEHIND commit(s) ($UPSTREAM_SHA)" -F body=@body.md --jq .number)
+          gh api "repos/$repo/issues/$number/labels" -f "labels[]=upstream-sync" --silent \
+            || echo "::warning::PR #$number ouverte, mais l'étiquette upstream-sync n'a pas pu être ajoutée."
+          echo "PR ouverte : ${GITHUB_SERVER_URL}/$repo/pull/$number"
