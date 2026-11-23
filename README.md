@@ -1,5 +1,10 @@
 # mcp-intermarche-drive
 
+> **Maintained fork** of [nicolasestrem/mcp-intermarche-drive](https://github.com/nicolasestrem/mcp-intermarche-drive).
+> It follows Intermarché's cart API v2 (the upstream basket tools fail with `404 UNKNOWN_CART_ID` since
+> November 2026) and adds batch adds, undo, a live self-test, pickup slots and account lists, favourites
+> and orders. What changed and why is documented in [`docs/api-notes.md`](docs/api-notes.md).
+
 Unofficial MCP server for Intermarché Courses / Drive. It searches the catalogue of the store selected in Intermarché and reads or updates the current basket through one visible Chromium tab.
 
 It does not place orders. Checkout, payment, account changes, and delivery-slot booking stay on the website.
@@ -89,15 +94,13 @@ Set `INTERMARCHE_CHROME_PATH` when your browser lives elsewhere, such as `google
 ## Install from source
 
 ```bash
-git clone https://github.com/nicolasestrem/mcp-intermarche-drive.git
+git clone https://github.com/Wasabules/mcp-intermarche-drive.git
 cd mcp-intermarche-drive
 npm ci
 npm run build
 npm test
 npm run smoke
 ```
-
-The repository is private, so the clone command requires GitHub access to it.
 
 The executable entry point after the build is:
 
