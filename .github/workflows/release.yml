@@ -1,0 +1,56 @@
+name: Release
+
+# Push a tag matching package.json (e.g. `npm version minor && git push --follow-tags`) to publish a
+# GitHub release with the npm tarball, its SHA-256 and a signed build-provenance attestation.
+# Install a release with: npm install -g <tarball URL>   (provides the `mcp-intermarche-drive` command)
+# Verify it with:         gh attestation verify <tarball> --repo <owner>/mcp-intermarche-drive
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - name: Tag matches package.json
+        run: |
+          expected="v$(node -p "require('./package.json').version")"
+          if [ "$GITHUB_REF_NAME" != "$expected" ]; then
+            echo "Le tag $GITHUB_REF_NAME ne correspond pas à package.json ($expected)." >&2
+            exit 1
+          fi
+      - run: npm ci --ignore-scripts
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run smoke
+      - name: Build the package
+        run: |
+          npm run build
+          npm pack --ignore-scripts
+          sha256sum ./*.tgz > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+      - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: "*.tgz"
+      - name: Publish the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" ./*.tgz SHA256SUMS.txt \
+            --repo "$GITHUB_REPOSITORY" --title "$GITHUB_REF_NAME" --generate-notes --verify-tag

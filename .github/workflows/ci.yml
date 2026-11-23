@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Tests (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24, 26]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      # Dependency install scripts never run: none of the dependencies needs one.
+      - run: npm ci --ignore-scripts
+      - run: npm run typecheck
+      # Unit tests, normalizers against sanitized live fixtures, and the fixture privacy guard.
+      - run: npm test
+      - name: MCP stdio smoke test (initialize + tools/list + annotations)
+        run: npm run smoke
+
+  workflows:
+    name: Lint GitHub workflows (actionlint + shellcheck)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      ACTIONLINT_VERSION: 1.7.12
+      ACTIONLINT_SHA256: 8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install a pinned, checksum-verified actionlint
+        run: |
+          archive="actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+          curl -fsSLo "$archive" "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/${archive}"
+          echo "${ACTIONLINT_SHA256}  ${archive}" | sha256sum -c -
+          tar -xzf "$archive" actionlint
+      - name: actionlint (shellcheck is preinstalled on the runner)
+        run: ./actionlint -color
+
+  package:
+    name: Dependency audit and package contents
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: npm audit
+        run: npm audit --audit-level=moderate
+      - name: Package contains the server and nothing private
+        run: |
+          npm run build
+          npm pack --dry-run --json --ignore-scripts > pack.json
+          node --input-type=module -e '
+            import { readFileSync } from "node:fs";
+            const files = JSON.parse(readFileSync("pack.json", "utf8"))[0].files.map((f) => f.path);
+            const missing = ["dist/src/index.js", "dist/src/server.js", "README.md", "LICENSE"].filter((f) => !files.includes(f));
+            const forbidden = files.filter((f) => /^(tests|scripts|src)\/|(^|\/)\.env|\.log$/.test(f));
+            console.log(`${files.length} fichiers dans le paquet`);
+            if (missing.length || forbidden.length) {
+              console.error({ missing, forbidden });
+              process.exit(1);
+            }
+          '

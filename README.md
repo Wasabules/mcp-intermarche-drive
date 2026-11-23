@@ -1,5 +1,8 @@
 # mcp-intermarche-drive
 
+[![CI](https://github.com/Wasabules/mcp-intermarche-drive/actions/workflows/ci.yml/badge.svg)](https://github.com/Wasabules/mcp-intermarche-drive/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/Wasabules/mcp-intermarche-drive/actions/workflows/codeql.yml/badge.svg)](https://github.com/Wasabules/mcp-intermarche-drive/actions/workflows/codeql.yml)
+
 > **Maintained fork** of [nicolasestrem/mcp-intermarche-drive](https://github.com/nicolasestrem/mcp-intermarche-drive).
 > It follows Intermarché's cart API v2 (the upstream basket tools fail with `404 UNKNOWN_CART_ID` since
 > November 2026) and adds batch adds, undo, a live self-test, pickup slots and account lists, favourites
@@ -224,6 +227,24 @@ Close extra Intermarché tabs in the dedicated profile. Remove a stale `INTERMAR
 ### Chromium reports that the profile is already in use
 
 Reuse the already-running CDP instance on the configured port, or close that dedicated Chromium process before starting another one. Do not reuse the same profile directory from two browser processes.
+
+## CI/CD
+
+| Workflow | Trigger | What it does |
+| --- | --- | --- |
+| `ci.yml` | push to `main`, pull requests | Typecheck, tests (including the fixture privacy guard) and the stdio smoke test on Node 22, 24 and 26; `npm audit`; package contents check; actionlint + shellcheck on the workflows. |
+| `codeql.yml` | push, pull requests, weekly | CodeQL `security-extended` analysis: the server injects JavaScript into a signed-in tab. |
+| `upstream-sync.yml` | weekly, manual | Merges new upstream commits into a branch, runs the suite on the merge in a read-only job, then opens a pull request here (an issue on conflict). |
+| `release.yml` | tag `v*` matching `package.json` | Tests, `npm pack`, SHA-256, signed build-provenance attestation, GitHub release. |
+| `dependabot.yml` | weekly | Grouped npm and GitHub Actions updates. |
+
+Every third-party action is pinned to a commit SHA. Live checks against Intermarché are deliberately
+**not** run in CI: they need a signed-in browser session, would hit DataDome from datacenter IPs, and
+would act on a real basket. Run `self_test` locally instead.
+
+Cut a release with `npm version minor && git push --follow-tags`. Install one with
+`npm install -g <tarball URL from the release>` and check it with
+`gh attestation verify <tarball> --repo Wasabules/mcp-intermarche-drive`.
 
 ## Development and verification
 

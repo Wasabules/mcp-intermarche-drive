@@ -1,0 +1,119 @@
+name: Upstream sync
+
+# Keeps this fork close to nicolasestrem/mcp-intermarche-drive: when upstream has new commits, merge
+# them into a branch, run the full test suite on the result, and open a pull request here (or an issue
+# when the merge conflicts). Upstream code is only executed in the read-only `test` job, which has no
+# write token; the job that pushes and opens the PR only runs git and gh.
+
+on:
+  schedule:
+    - cron: "41 5 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency: upstream-sync
+
+env:
+  UPSTREAM_URL: https://github.com/nicolasestrem/mcp-intermarche-drive.git
+  UPSTREAM_BRANCH: main
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      behind: ${{ steps.compare.outputs.behind }}
+      upstream_sha: ${{ steps.compare.outputs.upstream_sha }}
+      conflict: ${{ steps.compare.outputs.conflict }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: compare
+        run: |
+          git remote add upstream "$UPSTREAM_URL"
+          git fetch --no-tags upstream "$UPSTREAM_BRANCH"
+          behind=$(git rev-list --count "HEAD..upstream/$UPSTREAM_BRANCH")
+          echo "behind=$behind" >> "$GITHUB_OUTPUT"
+          echo "upstream_sha=$(git rev-parse --short=12 "upstream/$UPSTREAM_BRANCH")" >> "$GITHUB_OUTPUT"
+          git -c user.name=ci -c user.email=ci@localhost merge --no-commit --no-ff "upstream/$UPSTREAM_BRANCH" >/dev/null 2>&1 \
+            && echo "conflict=false" >> "$GITHUB_OUTPUT" || echo "conflict=true" >> "$GITHUB_OUTPUT"
+          echo "Upstream a $behind commit(s) que ce fork n'a pas."
+
+  test:
+    needs: detect
+    if: needs.detect.outputs.behind != '0' && needs.detect.outputs.conflict == 'false'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      result: ${{ steps.run.outputs.result }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - name: Merge upstream locally and run the suite
+        id: run
+        run: |
+          git remote add upstream "$UPSTREAM_URL"
+          git fetch --no-tags upstream "$UPSTREAM_BRANCH"
+          git -c user.name=ci -c user.email=ci@localhost merge --no-ff --no-edit "upstream/$UPSTREAM_BRANCH"
+          set +e
+          { npm ci --ignore-scripts && npm run typecheck && npm test && npm run smoke; } > test.log 2>&1
+          code=$?
+          tail -n 60 test.log
+          if [ "$code" -eq 0 ]; then echo "result=success" >> "$GITHUB_OUTPUT"; else echo "result=failure" >> "$GITHUB_OUTPUT"; fi
+
+  propose:
+    needs: [detect, test]
+    if: always() && needs.detect.outputs.behind != '0'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      BEHIND: ${{ needs.detect.outputs.behind }}
+      UPSTREAM_SHA: ${{ needs.detect.outputs.upstream_sha }}
+      CONFLICT: ${{ needs.detect.outputs.conflict }}
+      TEST_RESULT: ${{ needs.test.outputs.result }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Open a pull request, or an issue on conflict
+        run: |
+          gh label create upstream-sync --color 0E8A16 --description "Synchronisation avec le projet d'origine" 2>/dev/null || true
+          if [ -n "$(gh pr list --state open --label upstream-sync --json number --jq '.[].number')" ] \
+             || [ -n "$(gh issue list --state open --label upstream-sync --json number --jq '.[].number')" ]; then
+            echo "Une synchronisation est déjà ouverte : rien à faire."
+            exit 0
+          fi
+          git remote add upstream "$UPSTREAM_URL"
+          git fetch --no-tags upstream "$UPSTREAM_BRANCH"
+          commits=$(git log --format='- %h %s (%an)' "HEAD..upstream/$UPSTREAM_BRANCH")
+          if [ "$CONFLICT" = "true" ]; then
+            printf 'Le projet d'"'"'origine a %s nouveau(x) commit(s) qui entrent en conflit avec ce fork.\n\n%s\n\nÀ fusionner à la main : `git fetch upstream && git merge upstream/%s`, puis `npm test`, `npm run smoke` et un `self_test` en réel.\n\nDétection : %s\n' \
+              "$BEHIND" "$commits" "$UPSTREAM_BRANCH" "$RUN_URL" > body.md
+            gh issue create --title "Upstream : $BEHIND commit(s) en conflit ($UPSTREAM_SHA)" --body-file body.md --label upstream-sync
+            exit 0
+          fi
+          branch="upstream-sync/$UPSTREAM_SHA"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git merge --no-ff --no-edit "upstream/$UPSTREAM_BRANCH"
+          git push origin "$branch"
+          if [ "$TEST_RESULT" = "success" ]; then verdict="✅ typage, tests et smoke test passent sur la fusion"; else verdict="❌ la suite échoue sur la fusion : voir les journaux"; fi
+          printf '%s nouveau(x) commit(s) du projet d'"'"'origine.\n\n%s\n\n**Tests :** %s (%s).\n\nUne PR ouverte par GitHub Actions ne relance pas la CI : les tests ci-dessus ont tourné dans ce workflow, sur cette fusion exacte.\n\nAvant de fusionner : relire le diff, puis lancer `self_test` en réel après `/mcp` → Reconnect.\n' \
+            "$BEHIND" "$commits" "$verdict" "$RUN_URL" > body.md
+          gh pr create --base main --head "$branch" --title "Sync upstream : $BEHIND commit(s) ($UPSTREAM_SHA)" --body-file body.md --label upstream-sync

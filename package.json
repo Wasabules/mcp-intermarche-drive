@@ -1,6 +1,6 @@
 {
   "name": "mcp-intermarche-drive",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Local MCP server for Intermarché Courses with browser-backed product search and basket tools",
   "type": "module",
   "bin": {
