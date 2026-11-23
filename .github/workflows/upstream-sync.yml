@@ -9,6 +9,11 @@ on:
   schedule:
     - cron: "41 5 * * 1"
   workflow_dispatch:
+    inputs:
+      base:
+        description: Branch of this fork to bring up to date (default main)
+        required: false
+        default: main
 
 permissions:
   contents: read
@@ -18,6 +23,7 @@ concurrency: upstream-sync
 env:
   UPSTREAM_URL: https://github.com/nicolasestrem/mcp-intermarche-drive.git
   UPSTREAM_BRANCH: main
+  BASE: ${{ inputs.base || 'main' }}
 
 jobs:
   detect:
@@ -30,6 +36,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ env.BASE }}
           fetch-depth: 0
           persist-credentials: false
       - id: compare
@@ -53,6 +60,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ env.BASE }}
           fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -89,6 +97,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ env.BASE }}
           fetch-depth: 0
       - name: Open a pull request, or an issue on conflict
         run: |
@@ -107,7 +116,7 @@ jobs:
             gh issue create --title "Upstream : $BEHIND commit(s) en conflit ($UPSTREAM_SHA)" --body-file body.md --label upstream-sync
             exit 0
           fi
-          branch="upstream-sync/$UPSTREAM_SHA"
+          branch="upstream-sync/$BASE/$UPSTREAM_SHA"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "$branch"
@@ -116,4 +125,4 @@ jobs:
           if [ "$TEST_RESULT" = "success" ]; then verdict="✅ typage, tests et smoke test passent sur la fusion"; else verdict="❌ la suite échoue sur la fusion : voir les journaux"; fi
           printf '%s nouveau(x) commit(s) du projet d'"'"'origine.\n\n%s\n\n**Tests :** %s (%s).\n\nUne PR ouverte par GitHub Actions ne relance pas la CI : les tests ci-dessus ont tourné dans ce workflow, sur cette fusion exacte.\n\nAvant de fusionner : relire le diff, puis lancer `self_test` en réel après `/mcp` → Reconnect.\n' \
             "$BEHIND" "$commits" "$verdict" "$RUN_URL" > body.md
-          gh pr create --base main --head "$branch" --title "Sync upstream : $BEHIND commit(s) ($UPSTREAM_SHA)" --body-file body.md --label upstream-sync
+          gh pr create --base "$BASE" --head "$branch" --title "Sync upstream : $BEHIND commit(s) ($UPSTREAM_SHA)" --body-file body.md --label upstream-sync
