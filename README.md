@@ -48,12 +48,24 @@ The full design review is in [`docs/design-review.md`](docs/design-review.md). U
 | Tool | Reads or writes | Contract |
 | --- | --- | --- |
 | `browser_status` | Read | Reports CDP state, active store reference, delivery mode, whether a basket id was found, and visible DataDome action required. |
-| `search_product` | Read | Searches the active store. Returns Intermarché `itemId` values for basket tools. |
-| `get_cart` | Read | Returns the complete normalized basket and total. |
-| `add_to_cart` | Write | Increases the current quantity by `quantity`. Substitutions default to `false`. |
-| `update_quantity` | Write | Sets an absolute quantity. `0` removes the line. |
+| `search_product` | Read | Searches the active store. Sponsored placements are always dropped, out-of-stock products unless `available_only=false`; `promotions_only` keeps offers only. `sort` = `relevance`, `price` or `unit_price` (server-side). Each product carries `packaging`, `unitPrice`, `labels`, current `promotions`, `promoUnitPrice` for lot offers, `estimatedPrice`/`gramsPerUnit` when sold by weight, `maxPerOrder` and `lowStock`; no image URL or EAN. |
+| `get_cart` | Read | Complete basket: lines, per-line and basket-wide substitution state, total, and `issues` Intermarché reports (unavailable, short stock, over the maximum). |
+| `add_items` | Write | Adds several products in one synchronization (one read, one write, one substitution follow-up when needed). Substitutions default to `false`. Returns only the touched lines and totals. |
+| `add_to_cart` | Write | Same as `add_items` for one product. |
+| `update_quantity` | Write | Sets an absolute quantity (sent as a delta, see API notes). `0` removes the line. |
 | `remove_from_cart` | Write | Removes one product line. |
 | `set_substitution` | Write | Sets substitution consent for a product already in the basket. |
+| `set_cart_substitution` | Write | Sets the basket-wide substitution default (`CART_SUBSTITUTION`). |
+| `undo_last_change` | Write | Restores the lines touched by the last MCP change of this session (repeatable, up to 20 steps). |
+| `self_test` | Write | Live check on one cheap product: add 1 with substitution refused, set a quantity, restore the line. Run it before a shopping session. |
+| `get_slots` | Read | Upcoming pickup slots of the active store. Booking stays on the website. |
+| `get_shopping_lists` / `get_shopping_list` | Read | Saved shopping lists of the signed-in account and their products. |
+| `get_favorites` | Read | Usual products of the signed-in account. |
+| `get_orders` | Read | Recent orders in the active store with their items (whitelisted fields: no address, payment or loyalty data). |
+
+After every successful write the tab shows the basket page (`INTERMARCHE_REFRESH_TAB_AFTER_WRITE`, default `true`), so the website never applies a quantity delta to a stale line when you click there afterwards.
+
+Account tools need a signed-in session. The customer id is substituted **inside the page** from `persist:auth`; the MCP process never reads it or the personal data stored next to it.
 
 `product_id` means the `id` returned by `search_product` or `get_cart`. It is normally Intermarché's `itemId`, not the EAN printed on the package.
 
@@ -170,6 +182,7 @@ Do not point this server at your everyday browser profile. CDP grants control ov
 | `INTERMARCHE_MAX_RETRIES` | `2` | Bounded retries for HTTP 403 and 429. |
 | `INTERMARCHE_BACKOFF_BASE_MS` | `1800` | Base for exponential retry backoff. |
 | `INTERMARCHE_CDP_TIMEOUT_MS` | `30000` | Timeout for CDP commands and browser fetches. |
+| `INTERMARCHE_REFRESH_TAB_AFTER_WRITE` | `true` | Show the basket page in the tab after each write so the site's view is never stale. |
 
 Avoid setting `INTERMARCHE_PDV_REF` unless browser-state discovery is broken. An override that points at another store can mix that store's API path with the basket state held by the visible tab.
 
@@ -216,6 +229,7 @@ npm run typecheck
 npm test
 npm run smoke
 npm audit --audit-level=low
+npm run fixtures:record -- 9222 <pdvRef>   # re-record sanitized live fixtures after an Intermarché change
 npm pack --dry-run
 ```
 

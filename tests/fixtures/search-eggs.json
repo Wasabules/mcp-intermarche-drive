@@ -1,0 +1,737 @@
+{
+  "produits": [
+    {
+      "catalog": "pdv",
+      "identifier": 19532,
+      "idProduit": "3251320080617",
+      "itemId": "19532",
+      "produitEan13": "3251320080617",
+      "typeProduit": {
+        "code": "PU",
+        "value": "Pièce unitaire"
+      },
+      "unitePrixVente": {
+        "value": "€/Unité"
+      },
+      "pviIncrement": 1,
+      "volumeSurcharge": false,
+      "images": [
+        "https://assets-big.cdn-mousquetaires.com/medias/domain11815/media140459/12137769-5w00svavxe-ecommint.jpg",
+        "https://assets-big.cdn-mousquetaires.com/medias/domain11815/media140459/12137766-tlt8hvse6x-ecommint.jpg",
+        "https://assets-big.cdn-mousquetaires.com/medias/domain11815/media145734/13720236-fp35vvs5ky-ecommint.jpg"
+      ],
+      "vat": 5.5,
+      "oldPrice": 2.5,
+      "isDecreasingPrice": false,
+      "unitPrice": 0.41,
+      "prixBarre": 0,
+      "latestBestPrice": 2.47,
+      "stock": 28,
+      "onlineExclusive": false,
+      "vignetteCollector": 0,
+      "typeOrigine": -1,
+      "grammage": "344",
+      "pictogrammes": [
+        {
+          "idPicto": 20380,
+          "idCategorie": 6,
+          "libelleCategorie": "Label rouge",
+          "image": "https://cdn.intermarche.com/fr/Ressources/images/publication/27485.png",
+          "infoBulle": "label rouge"
+        }
+      ],
+      "substituable": false,
+      "volume": 6,
+      "isTrad": false,
+      "isPresentAlcoholProduct": false,
+      "allergene": "cacahuètes / arachides (Absence), céleri (Absence), céréales contenant du gluten (Absence), crustacés (Absence), dioxyde de soufre et sulfites (Absence), fruit à coque (Absence), graines de sésame (Absence), lait (Absence), lupin (Absence), mollusques (Absence), moutarde (Absence), oeufs (Presence), poisson (Absence), soja (Absence)",
+      "eligibleMealVoucher": true,
+      "usualProductInfo": {
+        "usual": false
+      },
+      "qteMaxPanier": 99,
+      "marque": "Fermiers de Loué",
+      "libelle": "Œufs fermiers Label Rouge",
+      "conditionnement": "la boite de 6",
+      "prix": 2.46,
+      "prixKg": 2.46,
+      "kiloAndLitreUnitLabel": "Unité",
+      "avantages": [
+        {
+          "valeur": 50,
+          "type": "PCT",
+          "dateFin": "2026-11-29T22:59:59Z",
+          "categorie": "LV",
+          "dateDebut": "2026-11-16T23:00:00Z",
+          "maxDeclenchement": 6,
+          "remise": 1.23,
+          "quantiteLot": 2
+        },
+        {
+          "dateFin": "2026-11-29T23:59:59+01:00",
+          "categorie": "PROSPECTUS"
+        }
+      ],
+      "poidsMinimum": 318,
+      "idUnivers": 2212,
+      "idRayon": 16768,
+      "idFamille": 16771,
+      "compatibleConsigne": true,
+      "dispoCataloguePdv": true,
+      "poidsNet": 318,
+      "nbPiece": 6,
+      "familyCodeNomenclature": "3014"
+    },
+    {
+      "catalog": "pdv",
+      "identifier": 19617,
+      "idProduit": "3282078203010",
+      "itemId": "19617",
+      "produitEan13": "3282078203010",
+      "typeProduit": {
+        "code": "PU",
+        "value": "Pièce unitaire"
+      },
+      "unitePrixVente": {
+        "value": "€/Unité"
+      },
+      "pviIncrement": 1,
+      "volumeSurcharge": false,
+      "images": [
+        "https://assets-big.cdn-mousquetaires.com/medias/domain11815/media145824/13747464-2ivd742qog-ecommint.jpg",
+        "https://assets-big.cdn-mousquetaires.com/medias/domain11815/media110260/3078196-blu59992pm-ecommint.jpg",
+        "https://assets-big.cdn-mousquetaires.com/medias/domain11815/media112049/3614875-qxvnr13wjm-ecommint.jpg",
+        "https://assets-big.cdn-mousquetaires.com/medias/domain11815/media145808/13742664-m2kt0p9523-ecommint.jpg",
+        "https://assets-big.cdn-mousquetaires.com/medias/domain11815/media145808/13742658-tilqy751e8-ecommint.jpg",
+        "https://assets-big.cdn-mousquetaires.com/medias/domain11815/media145808/13742661-e77egxsal8-ecommint.jpg"
+      ],
+      "vat": 5.5,
+      "oldPrice": 2.03,
+      "isDecreasingPrice": false,
+      "unitPrice": 0.34,
+      "prixBarre": 0,
+      "latestBestPrice": 2,
+      "stock": 11,
+      "onlineExclusive": false,
+      "vignetteCollector": 0,
+      "typeOrigine": -1,
+      "grammage": "404",
+      "pictogrammes": [
+        {
+          "idPicto": 20498,
+          "idCategorie": 12,
+          "libelleCategorie": "Œuf de France",
+          "image": "https://cdn.intermarche.com/fr/Ressources/images/publication/27684.png",
+          "infoBulle": ""
+        }
+      ],
+      "substituable": false,
+      "volume": 6,
+      "isTrad": false,
+      "isPresentAlcoholProduct": false,
+      "allergene": "cacahuètes / arachides (Absence), céleri (Absence), céréales contenant du gluten (Absence), crustacés (Absence), dioxyde de soufre et sulfites (Absence), fruit à coque (Absence), graines de sésame (Absence), lait (Absence), lupin (Absence), mollusques (Absence), moutarde (Absence), oeufs (Presence), poisson (Absence), soja (Absence)",
+      "idealProducts": [
+        {
+          "catalog": "pdv",
+          "identifier": 132392,
+          "idProduit": "3250392849443",
+          "itemId": "132392",
+          "produitEan13": "3250392849443",
+          "typeProduit": {
+            "code": "PUP",
+            "value": "Pièce avec poids",
+            "uniteByCode": "kg"
+          },
+          "unitePrixVente": {
+            "value": "€/L"
+          },
+          "pviIncrement": 1,
+          "capacite": 450,
+          "volumeSurcharge": false,
+          "images": [
+            "https://assets-big.cdn-mousquetaires.com/medias/domain11815/media139772/11931717-m7f7e9l9a8-ecommint.jpg"
+          ],
+          "vat": 5.5,
+          "isDecreasingPrice": false,
+          "unitPrice": 2.91,
+          "prixBarre": 0,
+          "latestBestPrice": 1.31,
+          "stock": 24,
+          "onlineExclusive": false,
+          "vignetteCollector": 0,
+          "typeOrigine": -1,
+          "grammage": "468",
+          "pictogrammes": [
+            {
+              "idPicto": 20336,
+              "idCategorie": 10,
+              "libelleCategorie": "FRAIS",
+              "image": "https://cdn.intermarche.com/fr/Ressources/images/publication/27976.png",
+              "infoBulle": "A conserver au frais "
+            }
+          ],
+          "substituable": true,
+          "volume": 459,
+          "isTrad": false,
+          "isPresentAlcoholProduct": false,
+          "allergene": "lait (Presence)",
+          "customBanner": {
+            "title": "Le quotidien à prix bas",
+            "backgroundColor": "#CF0075",
+            "textColor": "#FFFFFF",
+            "redirectionId": "17546",
+            "type": "BOUTIQUE"
+          },
+          "eligibleMealVoucher": true,
+          "qteMaxPanier": 99,
+          "marque": "Pâturages, une marque Intermarché",
+          "libelle": "Crème fraîche épaisse légère 15% matière grasse",
+          "conditionnement": "le pot de 459g",
+          "prix": 1.31,
+          "prixKg": 2.91,
+          "avantages": [
+            {
+              "valeur": 5,
+              "type": "PCT",
+              "remise": 0.06,
+              "dateDebut": "2024-06-30T00:00:00+02:00",
+              "dateFin": "2026-12-30T23:59:59+01:00",
+              "maxDeclenchement": 99,
+              "categorie": "AC"
+            }
+          ],
+          "poidsMinimum": 450,
+          "idUnivers": 2212,
+          "idRayon": 15041,
+          "idFamille": 15042,
+          "idSousFamille": 15052,
+          "compatibleConsigne": true,
+          "dispoCataloguePdv": true,
+          "poidsNet": 450,
+          "familyCodeNomenclature": "3010"
+        },
+        {
+          "catalog": "pdv",
+          "identifier": 32908,
+          "idProduit": "3250391507580",
+          "itemId": "32908",
+          "produitEan13": "3250391507580",
+          "typeProduit": {
+            "code": "PUP",
+            "value": "Pièce avec poids",
+            "uniteByCode": "kg"
+          },
+          "unitePrixVente": {
+            "value": "€/Kg"
+          },
+          "pviIncrement": 1,
+          "capacite": 12,
+          "volumeSurcharge": false,
+          "images": [
+            "https://driveimg1.intermarche.com/fr/Content/images/boitmal/produit/zoom/1A72EEFEBD7384F90B4B48087F80A0EA.jpg"
+          ],
+          "vat": 5.5,
+          "oldPrice": 1.27,
+          "isDecreasingPrice": false,
+          "unitPrice": 102.5,
+          "prixBarre": 0,
+          "latestBestPrice": 1.23,
+          "stock": 6,
+          "onlineExclusive": false,
+          "vignetteCollector": 0,
+          "typeOrigine": -1,
+          "grammage": "14",
+          "pictogrammes": [],
+          "substituable": true,
+          "isTrad": false,
+          "isPresentAlcoholProduct": false,
+          "customBanner": {
+            "title": "Contre la vie chère",
+            "backgroundColor": "#CF0075",
+            "textColor": "#FFFFFF",
+            "redirectionId": "3056",
+            "type": "BOUTIQUE"
+          },
+          "eligibleMealVoucher": true,
+          "qteMaxPanier": 99,
+          "marque": "Bouton d’Or, une marque Intermarché",
+          "libelle": "Bouquet garni thym & laurier",
+          "conditionnement": "le sachet de 12 g",
+          "prix": 1.23,
+          "prixKg": 102.5,
+          "avantages": [],
+          "poidsMinimum": 12,
+          "idUnivers": 2213,
+          "idRayon": 3931,
+          "idFamille": 15293,
+          "compatibleConsigne": true,
+          "dispoCataloguePdv": true,
+          "poidsNet": 12,
+          "familyCodeNomenclature": "4212"
+        },
+        {
+          "catalog": "pdv",
+          "identifier": 137338,
+          "idProduit": "3250392849412",
+          "itemId": "137338",
+          "produitEan13": "3250392849412",
+          "typeProduit": {
+            "code": "PUP",
+            "value": "Pièce avec poids",
+            "uniteByCode": "kg"
+          },
+          "unitePrixVente": {
+            "value": "€/L"
+          },
+          "pviIncrement": 1,
+          "capacite": 441,
+          "volumeSurcharge": false,
+          "images": [
+            "https://driveimg1.intermarche.com/fr/Content/images/boitmal/produit/zoom/FCBE4C6E1952EDA5802C9249E04F12E2.jpg",
+            "https://driveimg1.intermarche.com/fr/Content/images/boitmal/produit/zoom/B473D9F09A15D9D707FE316EA3DD42E9.jpg"
+          ],
+          "vat": 5.5,
+          "oldPrice": 1.73,
+          "isDecreasingPrice": false,
+          "unitPrice": 4.01,
+          "prixBarre": 0,
+          "latestBestPrice": 1.77,
+          "stock": 22,
+          "onlineExclusive": false,
+          "vignetteCollector": 0,
+          "typeOrigine": -1,
+          "grammage": "468",
+          "pictogrammes": [
+            {
+              "idPicto": 20336,
+              "idCategorie": 10,
+              "libelleCategorie": "FRAIS",
+              "image": "https://cdn.intermarche.com/fr/Ressources/images/publication/27976.png",
+              "infoBulle": "A conserver au frais "
+            }
+          ],
+          "substituable": true,
+          "volume": 445,
+          "isTrad": false,
+          "isPresentAlcoholProduct": false,
+          "allergene": "lait (Presence)",
+          "customBanner": {
+            "title": "Le quotidien à prix bas",
+            "backgroundColor": "#CF0075",
+            "textColor": "#FFFFFF",
+            "redirectionId": "17546",
+            "type": "BOUTIQUE"
+          },
+          "eligibleMealVoucher": true,
+          "qteMaxPanier": 99,
+          "marque": "Pâturages, une marque Intermarché",
+          "libelle": "Crème fraîche entière épaisse 30% de matière grasse",
+          "conditionnement": "le pot de 445 g",
+          "prix": 1.77,
+          "prixKg": 4.01,
+          "avantages": [
+            {
+              "valeur": 5,
+              "type": "PCT",
+              "remise": 0.08,
+              "dateDebut": "2024-06-30T00:00:00+02:00",
+              "dateFin": "2026-12-30T23:59:59+01:00",
+              "maxDeclenchement": 99,
+              "categorie": "AC"
+            }
+          ],
+          "poidsMinimum": 441,
+          "idUnivers": 2212,
+          "idRayon": 15041,
+          "idFamille": 15042,
+          "idSousFamille": 15052,
+          "compatibleConsigne": true,
+          "dispoCataloguePdv": true,
+          "poidsNet": 441,
+          "familyCodeNomenclature": "3010"
+        },
+        {
+          "catalog": "pdv",
+          "identifier": 4485,
+          "idProduit": "3250390011583",
+          "itemId": "4485",
+          "produitEan13": "3250390011583",
+          "typeProduit": {
+            "code": "PUP",
+            "value": "Pièce avec poids",
+            "uniteByCode": "kg"
+          },
+          "unitePrixVente": {
+            "value": "€/Kg"
+          },
+          "pviIncrement": 1,
+          "capacite": 204,
+          "volumeSurcharge": false,
+          "images": [
+            "https://assets-big.cdn-mousquetaires.com/medias/domain11815/media139446/11833971-ctt45gk85h-ecommint.jpg"
+          ],
+          "vat": 5.5,
+          "oldPrice": 0.68,
+          "isDecreasingPrice": false,
+          "unitPrice": 3.19,
+          "prixBarre": 0,
+          "latestBestPrice": 0.65,
+          "stock": 20,
+          "onlineExclusive": false,
+          "vignetteCollector": 0,
+          "typeOrigine": -1,
+          "grammage": "209",
+          "pictogrammes": [
+            {
+              "idPicto": 20336,
+              "idCategorie": 10,
+              "libelleCategorie": "FRAIS",
+              "image": "https://cdn.intermarche.com/fr/Ressources/images/publication/27976.png",
+              "infoBulle": "A conserver au frais "
+            }
+          ],
+          "substituable": true,
+          "volume": 203,
+          "isTrad": false,
+          "isPresentAlcoholProduct": false,
+          "allergene": "lait (Presence)",
+          "customBanner": {
+            "title": "Le quotidien à prix bas",
+            "backgroundColor": "#CF0075",
+            "textColor": "#FFFFFF",
+            "redirectionId": "17546",
+            "type": "BOUTIQUE"
+          },
+          "eligibleMealVoucher": true,
+          "qteMaxPanier": 99,
+          "marque": "Pâturages, une marque Intermarché",
+          "libelle": "Crème fraîche légère épaisse 15% mat.gr.",
+          "conditionnement": "le pot de 20 cl",
+          "prix": 0.65,
+          "prixKg": 3.19,
+          "avantages": [
+            {
+              "valeur": 5,
+              "type": "PCT",
+              "remise": 0.03,
+              "dateDebut": "2024-06-30T00:00:00+02:00",
+              "dateFin": "2026-12-30T23:59:59+01:00",
+              "maxDeclenchement": 99,
+              "categorie": "AC"
+            }
+          ],
+          "poidsMinimum": 204,
+          "idUnivers": 2212,
+          "idRayon": 15041,
+          "idFamille": 15042,
+          "idSousFamille": 15052,
+          "compatibleConsigne": true,
+          "dispoCataloguePdv": true,
+          "poidsNet": 204,
+          "familyCodeNomenclature": "3010"
+        }
+      ],
+      "idealFlag": true,
+      "eligibleMealVoucher": true,
+      "usualProductInfo": {
+        "usual": false
+      },
+      "qteMaxPanier": 99,
+      "marque": "Matines",
+      "libelle": "Gros œufs plein air",
+      "conditionnement": "La boîte de 6 œufs",
+      "prix": 2,
+      "prixKg": 2,
+      "kiloAndLitreUnitLabel": "Unité",
+      "avantages": [
+        {
+          "dateFin": "2026-12-06T23:59:59+01:00",
+          "categorie": "PROSPECTUS"
+        }
+      ],
+      "poidsMinimum": 378,
+      "idUnivers": 2212,
+      "idRayon": 16768,
+      "idFamille": 16771,
+      "compatibleConsigne": true,
+      "dispoCataloguePdv": true,
+      "poidsNet": 378,
+      "nbPiece": 6,
+      "familyCodeNomenclature": "3014"
+    },
+    {
+      "catalog": "pdv",
+      "identifier": 19366,
+      "idProduit": "3250390168232",
+      "itemId": "19366",
+      "produitEan13": "3250390168232",
+      "typeProduit": {
+        "code": "PU",
+        "value": "Pièce unitaire"
+      },
+      "unitePrixVente": {
+        "value": "€/Unité"
+      },
+      "pviIncrement": 1,
+      "volumeSurcharge": false,
+      "images": [
+        "https://assets-big.cdn-mousquetaires.com/medias/domain11815/media141031/12309588-vo84tux4ay-ecommint.jpg"
+      ],
+      "vat": 5.5,
+      "isDecreasingPrice": false,
+      "unitPrice": 0.25,
+      "prixBarre": 0,
+      "latestBestPrice": 2.92,
+      "stock": 0,
+      "onlineExclusive": false,
+      "vignetteCollector": 0,
+      "typeOrigine": -1,
+      "grammage": "750",
+      "pictogrammes": [
+        {
+          "idPicto": 20498,
+          "idCategorie": 12,
+          "libelleCategorie": "Œuf de France",
+          "image": "https://cdn.intermarche.com/fr/Ressources/images/publication/27684.png",
+          "infoBulle": ""
+        }
+      ],
+      "substituable": true,
+      "volume": 12,
+      "isTrad": false,
+      "isPresentAlcoholProduct": false,
+      "allergene": "oeufs (Presence)",
+      "eligibleMealVoucher": true,
+      "usualProductInfo": {
+        "usual": false
+      },
+      "qteMaxPanier": 99,
+      "marque": "Volaé, une marque Intermarché",
+      "libelle": "œufs frais de poules élevées en plein air calibre moyen",
+      "conditionnement": "la boîte de 12 œufs",
+      "prix": 2.92,
+      "prixKg": 2.92,
+      "kiloAndLitreUnitLabel": "Unité",
+      "avantages": [],
+      "poidsMinimum": 696,
+      "idUnivers": 2212,
+      "idRayon": 16768,
+      "idFamille": 16770,
+      "compatibleConsigne": true,
+      "dispoCataloguePdv": true,
+      "poidsNet": 696,
+      "nbPiece": 12,
+      "familyCodeNomenclature": "3014"
+    },
+    {
+      "catalog": "pdv",
+      "identifier": 2750,
+      "idProduit": "3250390892069",
+      "itemId": "2750",
+      "produitEan13": "3250390892069",
+      "typeProduit": {
+        "code": "PU",
+        "value": "Pièce unitaire"
+      },
+      "unitePrixVente": {
+        "value": "€/Pièce"
+      },
+      "pviIncrement": 1,
+      "volumeSurcharge": false,
+      "images": [
+        "https://cdn.intermarche.com/fr/Content/images/pim/03250390892069/5fcfcc62fbbf4688967bcd521665550a.png"
+      ],
+      "vat": 5.5,
+      "oldPrice": 3.41,
+      "isDecreasingPrice": false,
+      "unitPrice": 3.44,
+      "prixBarre": 0,
+      "latestBestPrice": 3.44,
+      "stock": 0,
+      "onlineExclusive": false,
+      "vignetteCollector": 0,
+      "typeOrigine": -1,
+      "grammage": "676",
+      "pictogrammes": [
+        {
+          "idPicto": 15465,
+          "idCategorie": 6,
+          "libelleCategorie": "Bio",
+          "image": "https://cdn.intermarche.com/fr/Ressources/images/publication/27691.png",
+          "infoBulle": ""
+        },
+        {
+          "idPicto": 20498,
+          "idCategorie": 12,
+          "libelleCategorie": "Œuf de France",
+          "image": "https://cdn.intermarche.com/fr/Ressources/images/publication/27684.png",
+          "infoBulle": ""
+        }
+      ],
+      "substituable": true,
+      "volume": 10,
+      "isTrad": false,
+      "isPresentAlcoholProduct": false,
+      "allergene": "oeufs (Presence)",
+      "eligibleMealVoucher": true,
+      "usualProductInfo": {
+        "usual": false
+      },
+      "qteMaxPanier": 99,
+      "marque": "Volaé, une marque Intermarché",
+      "libelle": "Œufs frais de poules élevées en plein air BIO calibre moyen ou gros",
+      "conditionnement": "la boîte de 10 œufs",
+      "prix": 3.44,
+      "prixKg": 3.44,
+      "avantages": [],
+      "poidsMinimum": 630,
+      "idUnivers": 2212,
+      "idRayon": 16768,
+      "idFamille": 16770,
+      "compatibleConsigne": true,
+      "dispoCataloguePdv": true,
+      "poidsNet": 630,
+      "familyCodeNomenclature": "3014"
+    },
+    {
+      "catalog": "pdv",
+      "identifier": 99277,
+      "idProduit": "3250392427160",
+      "itemId": "99277",
+      "produitEan13": "3250392427160",
+      "typeProduit": {
+        "code": "PU",
+        "value": "Pièce unitaire"
+      },
+      "unitePrixVente": {
+        "value": "€/Pièce"
+      },
+      "pviIncrement": 1,
+      "volumeSurcharge": false,
+      "images": [
+        "https://cdn.intermarche.com/fr/Content/images/pim/03250392427160/57bfcc1ab4264025aecd71a89643479a.jpg",
+        "https://assets-big.cdn-mousquetaires.com/medias/domain11815/media140580/12174054-uktyynoqp8-ecommint.jpg"
+      ],
+      "vat": 5.5,
+      "oldPrice": 2.85,
+      "isDecreasingPrice": false,
+      "unitPrice": 2.84,
+      "prixBarre": 0,
+      "latestBestPrice": 2.84,
+      "stock": 20,
+      "onlineExclusive": false,
+      "vignetteCollector": 0,
+      "typeOrigine": -1,
+      "grammage": "688",
+      "pictogrammes": [
+        {
+          "idPicto": 20498,
+          "idCategorie": 12,
+          "libelleCategorie": "Œuf de France",
+          "image": "https://cdn.intermarche.com/fr/Ressources/images/publication/27684.png",
+          "infoBulle": ""
+        }
+      ],
+      "substituable": true,
+      "volume": 12,
+      "isTrad": false,
+      "isPresentAlcoholProduct": false,
+      "paysOrigine": "France",
+      "allergene": "oeufs (Presence)",
+      "eligibleMealVoucher": true,
+      "usualProductInfo": {
+        "usual": false
+      },
+      "qteMaxPanier": 99,
+      "marque": "Volaé, une marque Intermarché",
+      "libelle": "œufs frais de poules élevées au sol",
+      "conditionnement": "la boîte de 12 œufs",
+      "prix": 2.84,
+      "prixKg": 2.84,
+      "avantages": [],
+      "poidsMinimum": 636,
+      "idUnivers": 2212,
+      "idRayon": 16768,
+      "idFamille": 16770,
+      "compatibleConsigne": true,
+      "dispoCataloguePdv": true,
+      "poidsNet": 636,
+      "familyCodeNomenclature": "3014"
+    },
+    {
+      "catalog": "pdv",
+      "identifier": 208852,
+      "idProduit": "3700864007128",
+      "itemId": "208852",
+      "produitEan13": "3700864007128",
+      "typeProduit": {
+        "code": "PU",
+        "value": "Pièce unitaire"
+      },
+      "unitePrixVente": {
+        "value": "€/Unité"
+      },
+      "pviIncrement": 1,
+      "volumeSurcharge": false,
+      "images": [
+        "https://assets-big.cdn-mousquetaires.com/medias/domain11815/media145694/13708350-mstkt9x6vn-ecommint.jpg",
+        "https://assets-big.cdn-mousquetaires.com/medias/domain11815/media120787/6236310-v9lewh0yoe-ecommint.jpg",
+        "https://assets-big.cdn-mousquetaires.com/medias/domain11815/media125148/7544684-ma6a4lakp2-ecommint.jpg"
+      ],
+      "vat": 5.5,
+      "oldPrice": 3.01,
+      "isDecreasingPrice": false,
+      "unitPrice": 0.25,
+      "prixBarre": 0,
+      "latestBestPrice": 2.99,
+      "stock": 0,
+      "onlineExclusive": false,
+      "vignetteCollector": 0,
+      "typeOrigine": -1,
+      "grammage": "810",
+      "pictogrammes": [
+        {
+          "idPicto": 20498,
+          "idCategorie": 12,
+          "libelleCategorie": "Œuf de France",
+          "image": "https://cdn.intermarche.com/fr/Ressources/images/publication/27684.png",
+          "infoBulle": ""
+        },
+        {
+          "idPicto": 27267,
+          "idCategorie": 6,
+          "libelleCategorie": "PME+",
+          "image": "https://cdn.intermarche.com/fr/Ressources/images/publication/37374.jpg",
+          "infoBulle": ""
+        }
+      ],
+      "substituable": true,
+      "volume": 12,
+      "isTrad": false,
+      "isPresentAlcoholProduct": false,
+      "paysTransformation": "France",
+      "allergene": "oeufs (Presence)",
+      "eligibleMealVoucher": true,
+      "usualProductInfo": {
+        "usual": false
+      },
+      "qteMaxPanier": 99,
+      "marque": "l'Œuf de nos Villages",
+      "libelle": "Œufs frais de poules élevées au sol",
+      "conditionnement": "La boîte de 12",
+      "prix": 2.99,
+      "prixKg": 2.99,
+      "kiloAndLitreUnitLabel": "Unité",
+      "avantages": [],
+      "poidsMinimum": 756,
+      "idUnivers": 2212,
+      "idRayon": 16768,
+      "idFamille": 16770,
+      "compatibleConsigne": true,
+      "dispoCataloguePdv": true,
+      "poidsNet": 756,
+      "nbPiece": 12,
+      "familyCodeNomenclature": "3014"
+    }
+  ]
+}

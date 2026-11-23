@@ -42,10 +42,19 @@ try {
     "browser_status",
     "search_product",
     "get_cart",
+    "add_items",
     "add_to_cart",
     "update_quantity",
     "remove_from_cart",
     "set_substitution",
+    "set_cart_substitution",
+    "undo_last_change",
+    "self_test",
+    "get_slots",
+    "get_shopping_lists",
+    "get_shopping_list",
+    "get_favorites",
+    "get_orders",
   ];
   for (const name of expected) {
     if (!names.includes(name)) throw new Error(`Missing MCP tool: ${name}`);
@@ -59,6 +68,12 @@ try {
   }
   if (byName.remove_from_cart.annotations?.destructiveHint !== true) {
     throw new Error("remove_from_cart must advertise destructiveHint=true");
+  }
+  for (const name of ["get_slots", "get_shopping_lists", "get_shopping_list", "get_favorites", "get_orders"]) {
+    if (byName[name].annotations?.readOnlyHint !== true) throw new Error(`${name} must advertise readOnlyHint=true`);
+  }
+  if (byName.add_items.annotations?.destructiveHint !== false) {
+    throw new Error("add_items must advertise destructiveHint=false");
   }
   console.log(JSON.stringify({ ok: true, server: initialized.result.serverInfo, tools: names }, null, 2));
 } finally {

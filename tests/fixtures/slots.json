@@ -1,0 +1,41 @@
+[
+  {
+    "type": "DRIVE_24",
+    "status": "ACTIVE",
+    "date": "2026-11-24",
+    "timeSlot": {
+      "startDateTime": "2026-11-24T11:00:00Z",
+      "endDateTime": "2026-11-24T13:00:00Z",
+      "id": "30574661",
+      "pricingType": "NORMAL",
+      "status": "AVAILABLE"
+    }
+  },
+  {
+    "type": "HOME",
+    "status": "ACTIVE",
+    "firstDeliveryOffered": false,
+    "hasExtraFees": true,
+    "increasedPricing": true,
+    "date": "2026-11-24",
+    "timeSlot": {
+      "startDateTime": "2026-11-24T11:30:00Z",
+      "endDateTime": "2026-11-24T13:30:00Z",
+      "id": "30574671",
+      "pricingType": "NORMAL",
+      "status": "AVAILABLE"
+    }
+  },
+  {
+    "type": "DRIVE_LIGHT",
+    "status": "ACTIVE",
+    "date": "2026-11-24",
+    "timeSlot": {
+      "startDateTime": "2026-11-24T09:30:00Z",
+      "endDateTime": "2026-11-24T10:30:00Z",
+      "id": "30574706",
+      "pricingType": "NORMAL",
+      "status": "AVAILABLE"
+    }
+  }
+]

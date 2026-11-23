@@ -1,0 +1,72 @@
+{
+  "produits": [
+    {
+      "catalog": "pdv",
+      "identifier": 243163,
+      "idProduit": "8001665726573",
+      "itemId": "243163",
+      "produitEan13": "8001665726573",
+      "typeProduit": {
+        "code": "PUP",
+        "value": "Pièce avec poids",
+        "uniteByCode": "kg"
+      },
+      "unitePrixVente": {
+        "value": "€/Kg"
+      },
+      "pviIncrement": 1,
+      "capacite": 250,
+      "volumeSurcharge": false,
+      "images": [
+        "https://assets-big.cdn-mousquetaires.com/medias/domain11815/media135528/10658656-0puddkgthy-ecommint.jpg",
+        "https://assets-big.cdn-mousquetaires.com/medias/domain11815/media134518/10355647-8c6mmr2nme-ecommint.jpg"
+      ],
+      "vat": 5.5,
+      "oldPrice": 3.36,
+      "isDecreasingPrice": false,
+      "unitPrice": 13.24,
+      "prixBarre": 0,
+      "latestBestPrice": 3.31,
+      "stock": 6,
+      "onlineExclusive": false,
+      "vignetteCollector": 0,
+      "typeOrigine": -1,
+      "grammage": "275",
+      "pictogrammes": [
+        {
+          "idPicto": 20336,
+          "idCategorie": 10,
+          "libelleCategorie": "FRAIS",
+          "image": "https://cdn.intermarche.com/fr/Ressources/images/publication/27976.png",
+          "infoBulle": "A conserver au frais "
+        }
+      ],
+      "substituable": true,
+      "volume": 250,
+      "isTrad": false,
+      "isPresentAlcoholProduct": false,
+      "allergene": "blé (Presence), céleri (Traces), céréales contenant du gluten (Presence), crustacés (Traces), fruit à coque (Traces), lactose (Presence), lait (Presence), mollusques (Traces), oeufs (Presence), poisson (Traces)",
+      "sponsored": true,
+      "eligibleMealVoucher": true,
+      "advertiser": {
+        "name": "Rana France",
+        "funder": "Rana France"
+      },
+      "qteMaxPanier": 99,
+      "marque": "Rana",
+      "libelle": "Pâtes fraiches cappelletti au jambon cru",
+      "conditionnement": "le sachet de 250g",
+      "prix": 3.31,
+      "prixKg": 13.24,
+      "avantages": [],
+      "poidsMinimum": 250,
+      "idUnivers": 9426,
+      "idRayon": 9503,
+      "idFamille": 9507,
+      "compatibleConsigne": true,
+      "dispoCataloguePdv": true,
+      "poidsNet": 250,
+      "familyCodeNomenclature": "2604"
+    }
+  ]
+}

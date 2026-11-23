@@ -14,6 +14,8 @@ export interface IntermarcheConfig {
   maxRetries: number;
   backoffBaseMs: number;
   cdpTimeoutMs: number;
+  /** Show the basket page in the tab after each MCP write, so the site never acts on a stale view. */
+  refreshTabAfterWrite?: boolean;
 }
 
 function intEnv(name: string, fallback: number): number {
@@ -49,5 +51,6 @@ export function loadConfig(): IntermarcheConfig {
     maxRetries: intEnv("INTERMARCHE_MAX_RETRIES", 2),
     backoffBaseMs: intEnv("INTERMARCHE_BACKOFF_BASE_MS", 1800),
     cdpTimeoutMs: intEnv("INTERMARCHE_CDP_TIMEOUT_MS", 30_000),
+    refreshTabAfterWrite: boolEnv("INTERMARCHE_REFRESH_TAB_AFTER_WRITE", true),
   };
 }

@@ -1,7 +1,7 @@
 import { spawn } from "node:child_process";
 import { platform } from "node:os";
 
-import type { BrowserPort, FetchResponse } from "./types.js";
+import { CUSTOMER_ID_PLACEHOLDER, type BrowserPort, type FetchResponse } from "./types.js";
 
 interface ChromeOptions {
   chromePath?: string;
@@ -16,6 +16,8 @@ type JsonObject = Record<string, unknown>;
 type Pending = { resolve: (value: JsonObject) => void; reject: (error: Error) => void; timer: NodeJS.Timeout };
 
 const BASE_URL = "https://www.intermarche.com/drive-catalogue";
+const CART_URL = "https://www.intermarche.com/commandes/panier";
+
 const DEFAULT_BIN: Record<string, string> = {
   darwin: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
   linux: "chromium",
@@ -87,7 +89,7 @@ export class ChromeSession implements BrowserPort {
       statusText?: string;
       body?: string;
       error?: string;
-    }>(`(async()=>{const a=${JSON.stringify(args)};const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),a.timeoutMs);try{a.init.signal=controller.signal;const r=await fetch(a.url,a.init);const body=await r.text();return {status:r.status,ok:r.ok,statusText:r.statusText,body};}catch(e){return {error:String(e)}}finally{clearTimeout(timer)}})()`);
+    }>(`(async()=>{const a=${JSON.stringify(args)};${RESOLVE_CUSTOMER_ID}const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),a.timeoutMs);try{a.init.signal=controller.signal;const r=await fetch(a.url,a.init);const body=await r.text();return {status:r.status,ok:r.ok,statusText:r.statusText,body};}catch(e){return {error:String(e)}}finally{clearTimeout(timer)}})()`);
     if (value.error || value.status === undefined || value.body === undefined) {
       throw new Error(`Requête navigateur échouée: ${value.error ?? "réponse CDP invalide"}`);
     }
@@ -98,6 +100,11 @@ export class ChromeSession implements BrowserPort {
       text: () => value.body!,
       json: () => JSON.parse(value.body!),
     };
+  }
+
+  async showCart(): Promise<void> {
+    await this.ensureConnected();
+    await this.navigate(CART_URL);
   }
 
   async close(): Promise<void> {
@@ -239,6 +246,19 @@ export class ChromeSession implements BrowserPort {
     this.pending.clear();
   }
 }
+
+/**
+ * In-page snippet run before a fetch: substitutes the customer id placeholder (raw or URL-encoded)
+ * with persist:auth's user.id, or returns an error when nobody is signed in. Only the id is read.
+ */
+const RAW_PLACEHOLDER = JSON.stringify(CUSTOMER_ID_PLACEHOLDER);
+const ENCODED_PLACEHOLDER = JSON.stringify(encodeURIComponent(CUSTOMER_ID_PLACEHOLDER));
+const RESOLVE_CUSTOMER_ID =
+  `if(a.url.includes(${RAW_PLACEHOLDER})||a.url.includes(${ENCODED_PLACEHOLDER})){` +
+  "let uid='';try{const auth=JSON.parse(localStorage.getItem('persist:auth')||'{}');" +
+  "const user=typeof auth.user==='string'?JSON.parse(auth.user):auth.user;uid=String((user&&user.id)||'')}catch(e){}" +
+  "if(!uid)return {error:\"client non connecté sur Intermarché : connecte-toi dans l'onglet\"};" +
+  `a.url=a.url.split(${RAW_PLACEHOLDER}).join(encodeURIComponent(uid)).split(${ENCODED_PLACEHOLDER}).join(encodeURIComponent(uid))}`;
 
 function isIntermarcheUrl(url?: string): boolean {
   if (!url) return false;

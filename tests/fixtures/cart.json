@@ -1,0 +1,155 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "synchronizeDateTime": "2026-11-24T00:44:33.603408292+01:00",
+  "isPresentAlcoholProduct": false,
+  "amount": 14.08,
+  "animations": [],
+  "discounts": {
+    "amount": 0,
+    "values": [],
+    "status": "SUCCESS"
+  },
+  "mealVouchers": {
+    "eligibleAmount": 14.08
+  },
+  "itemsNumber": 9,
+  "metaData": {
+    "invalid": {
+      "advantages": [],
+      "unavailables": [],
+      "stocks": [],
+      "partialStocks": [],
+      "exceededQuantities": [],
+      "discounts": []
+    },
+    "unsynchronized": {
+      "serverItems": [
+        {
+          "itemId": "4463",
+          "quantity": 2,
+          "catalog": "PDV",
+          "requestedQuantity": 2,
+          "availableStock": 17
+        }
+      ]
+    }
+  },
+  "carts": [
+    {
+      "items": [
+        {
+          "id": "4463",
+          "modificationDate": "2026-11-23T23:39:48.528931061Z",
+          "quantity": 2,
+          "price": 0.69,
+          "amount": 1.38,
+          "acceptSubstitution": false,
+          "item": {
+            "itemId": "4463",
+            "idProduit": "3250390000372",
+            "identifier": 4463,
+            "produitEan13": "3250390000372",
+            "typeProduit": {
+              "code": "PUP",
+              "value": "Pièce avec poids"
+            },
+            "pviIncrement": 1,
+            "prix": 0.69,
+            "prixBarre": 0,
+            "prixKg": 1.38,
+            "vat": 5.5,
+            "poidsMinimum": 500,
+            "substituable": true,
+            "dispoCataloguePdv": true,
+            "stock": 17,
+            "avantages": [],
+            "images": [
+              "https://assets-big.cdn-mousquetaires.com/medias/domain11815/media140137/12041319-j4jtqops15-ecommint.jpg"
+            ],
+            "catalog": "PDV",
+            "precommande": false,
+            "libelle": "Spaghetti de qualité supérieure",
+            "compatibleConsigne": true,
+            "marque": "Fiorini, une marque Intermarché",
+            "capacite": 500,
+            "conditionnement": "le sachet de 500g",
+            "favori": false,
+            "qteMaxPanier": 99,
+            "produitsLot": [],
+            "poidsNet": 500,
+            "volume": 500,
+            "volumeSurcharge": false,
+            "isTrad": false,
+            "isPresentAlcoholProduct": false,
+            "eligibleMealVoucher": true,
+            "unitPrice": 1.38,
+            "onlineExclusive": false,
+            "idFamille": 17004,
+            "novelty": {},
+            "vignetteCollector": 0,
+            "idUnivers": 2213,
+            "idRayon": 17002,
+            "customBanner": {
+              "title": "Le quotidien à prix bas",
+              "backgroundColor": "#CF0075",
+              "textColor": "#FFFFFF",
+              "redirectionId": "17546",
+              "type": "BOUTIQUE"
+            },
+            "isDecreasingPrice": false,
+            "latestBestPrice": 0.69,
+            "unitePrixVente": {
+              "value": "€/Kg"
+            },
+            "creditNotesBanner": {},
+            "pictogrammes": [],
+            "familyCodeNomenclature": "4204",
+            "collectorPartenaire": false
+          }
+        }
+      ],
+      "catalog": "PDV",
+      "amount": 14.08,
+      "seller": {
+        "id": "ITM",
+        "name": "Intermarché"
+      },
+      "acceptSubstitution": true,
+      "itemsNumber": 9,
+      "lots": [],
+      "discounts": {
+        "amount": 0,
+        "values": [],
+        "status": "SUCCESS"
+      },
+      "mealVouchers": {
+        "eligibleAmount": 14.08
+      },
+      "weight": 2.898,
+      "volume": 0,
+      "deliveryExtraCostVolume": 0,
+      "bacsNumber": 1,
+      "metaData": {
+        "invalid": {
+          "advantages": [],
+          "unavailables": [],
+          "stocks": [],
+          "partialStocks": [],
+          "exceededQuantities": [],
+          "discounts": []
+        },
+        "unsynchronized": {
+          "serverItems": [
+            {
+              "itemId": "4463",
+              "quantity": 2,
+              "catalog": "PDV",
+              "requestedQuantity": 2,
+              "availableStock": 17
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

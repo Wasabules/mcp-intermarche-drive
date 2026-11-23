@@ -1,4 +1,4 @@
-import type { BrowserContext, Cart, CartItem, Product } from "../types.js";
+import type { BrowserContext, Cart, CartItem, Order, Product, Promotion, ShoppingList, TimeSlot } from "../types.js";
 
 type RawObject = Record<string, unknown>;
 
@@ -34,6 +34,9 @@ export function normalizeCartResponse(
   const total =
     numberFrom(rootData, ["amount", "total", "totalPrice", "price"]) ??
     numberFrom(envelope, ["amount", "total", "totalPrice", "price"]);
+  const issues = cartIssues(rootData);
+  const storeCart = carts.find((cart) => stringFrom(cart, ["catalog"])?.toUpperCase() === "PDV") ?? carts[0];
+  const cartSubstitution = storeCart ? booleanFrom(storeCart, ["acceptSubstitution"]) : undefined;
   return {
     rawItems,
     cart: {
@@ -42,6 +45,8 @@ export function normalizeCartResponse(
       itemCount: items.length,
       quantityTotal: items.reduce((sum, item) => sum + item.quantity, 0),
       total,
+      ...(cartSubstitution !== undefined ? { acceptSubstitution: cartSubstitution } : {}),
+      ...(issues.length > 0 ? { issues } : {}),
       pdvRef: context.pdvRef ?? "",
       deliveryMode: context.deliveryMode,
     },
@@ -116,7 +121,162 @@ function normalizeProduct(raw: RawObject): Product | null {
   const stock = numberFrom(raw, ["stock"]);
   const available = listedAvailable === false || stock === 0 ? false : listedAvailable ?? !offline;
   const ean = stringFrom(raw, ["produitEan13", "idProduit", "ean", "gtin"]);
-  return { id, label, brand, price, pricePerUnit, available, imageUrl, ean };
+  const packaging = stringFrom(raw, ["conditionnement", "packaging"]);
+  const labels = [
+    ...new Set(
+      arrayOfObjects(raw.pictogrammes)
+        .map((picto) => stringFrom(picto, ["libelleCategorie", "libelle", "label"]))
+        .filter((value): value is string => Boolean(value)),
+    ),
+  ];
+  const unitPrice = numberFrom(raw, ["prixKg"]);
+  const unitPriceUnit = stringFrom(objectFrom(raw.unitePrixVente), ["value"]);
+  const netWeightG = numberFrom(raw, ["poidsNet"]);
+  const soldByWeight = stringFrom(objectFrom(raw.typeProduit), ["code"])?.toUpperCase() === "PVI";
+  const weightPerUnitG = numberFrom(raw, ["pviIncrement"]);
+  const maxPerOrder = numberFrom(raw, ["qteMaxPanier"]);
+  const promotions = arrayOfObjects(raw.avantages)
+    .map(normalizePromotion)
+    .filter((promotion): promotion is Promotion => Boolean(promotion));
+  return {
+    id,
+    label,
+    brand,
+    ...(packaging ? { packaging } : {}),
+    ...(labels.length > 0 ? { labels } : {}),
+    ...(unitPrice !== undefined ? { unitPrice } : {}),
+    ...(unitPriceUnit ? { unitPriceUnit } : {}),
+    ...(netWeightG !== undefined && netWeightG > 0 ? { netWeightG } : {}),
+    ...(stock !== undefined ? { stock } : {}),
+    ...(raw.sponsored === true ? { sponsored: true } : {}),
+    ...(promotions.length > 0 ? { promotions } : {}),
+    ...(soldByWeight ? { soldByWeight: true } : {}),
+    ...(soldByWeight && weightPerUnitG !== undefined && weightPerUnitG > 0 ? { weightPerUnitG } : {}),
+    ...(maxPerOrder !== undefined && maxPerOrder > 0 ? { maxPerOrder } : {}),
+    price,
+    pricePerUnit,
+    available,
+    imageUrl,
+    ean,
+  };
+}
+
+const ISSUE_LABELS: Record<string, string> = {
+  unavailables: "indisponible(s)",
+  stocks: "stock épuisé",
+  partialStocks: "stock insuffisant",
+  exceededQuantities: "quantité maximale dépassée",
+  advantages: "offre(s) plus valable(s)",
+  discounts: "remise(s) plus valable(s)",
+};
+
+/** Turns `metaData.invalid` (lists of lines Intermarché flags) into short readable messages. */
+function cartIssues(root: RawObject): string[] {
+  const invalid = objectFrom(objectFrom(root.metaData)?.invalid);
+  if (!invalid) return [];
+  return Object.entries(invalid).flatMap(([key, value]) => {
+    if (!Array.isArray(value) || value.length === 0) return [];
+    const lines = value.map((entry) => {
+      const line = objectFrom(entry);
+      if (!line) return String(entry);
+      const id = stringFrom(line, ["itemId", "id", "productId"]) ?? "?";
+      const stock = numberFrom(line, ["availableStock"]);
+      return stock !== undefined ? `${id} (stock ${stock})` : id;
+    });
+    return [`${ISSUE_LABELS[key] ?? key} : ${lines.join(", ")}`];
+  });
+}
+
+/** Upcoming pickup/delivery slots of a store (`/delivery/v1/stores/{pdv}/upcoming-time-slots`). */
+export function normalizeSlots(raw: unknown): TimeSlot[] {
+  const list = Array.isArray(raw) ? raw : arrayOfObjects(objectFrom(raw)?.slots ?? objectFrom(raw)?.data);
+  return list.flatMap((candidate) => {
+    const slot = objectFrom(candidate);
+    if (!slot) return [];
+    const timeSlot = objectFrom(slot.timeSlot) ?? {};
+    const view: TimeSlot = {};
+    const date = stringFrom(slot, ["date"]);
+    const start = stringFrom(timeSlot, ["startDateTime"]);
+    const end = stringFrom(timeSlot, ["endDateTime"]);
+    const status = stringFrom(timeSlot, ["status"]) || stringFrom(slot, ["status"]);
+    const type = stringFrom(slot, ["type"]);
+    const pricingType = stringFrom(timeSlot, ["pricingType"]);
+    if (date) view.date = date;
+    if (start) view.start = start;
+    if (end) view.end = end;
+    if (status) view.status = status;
+    if (type) view.type = type;
+    if (pricingType) view.pricingType = pricingType;
+    return [view];
+  });
+}
+
+/** Shopping lists (`/consommateur/v1/consommateurs/{id}/listes_courses`), mapped like the site does. */
+export function normalizeShoppingLists(raw: unknown): ShoppingList[] {
+  return arrayOfObjects(objectFrom(raw)?.listesCourse).flatMap((list) => {
+    const id = stringFrom(list, ["idListeCourses", "id"]);
+    if (!id) return [];
+    const count = numberFrom(list, ["nombreProduits"]);
+    return [{ id, name: stringFrom(list, ["libelle", "nom"]) ?? "", ...(count !== undefined ? { count } : {}) }];
+  });
+}
+
+/**
+ * Orders (`/commandes/v2/consommateurs/{id}/commandes?articles=true`), mapped like the site does.
+ * Whitelist only: delivery/billing addresses, payment and loyalty fields are dropped.
+ */
+export function normalizeOrders(raw: unknown): Order[] {
+  return arrayOfObjects(objectFrom(raw)?.commandes).flatMap((order) => {
+    const id = stringFrom(order, ["numeroCommande", "id"]);
+    if (!id) return [];
+    const slot = objectFrom(order.creneauSouhaite);
+    const items = arrayOfObjects(order.articles).flatMap((article) => {
+      const info = objectFrom(article.infoProduit);
+      const product =
+        (info ? normalizeProduct(info) : null) ??
+        normalizeProduct({
+          itemId: stringFrom(article, ["itemId", "idProduit", "ean"]),
+          libelle: article.libelle,
+          marque: article.marque,
+          prix: article.prix,
+        });
+      if (!product) return [];
+      const acceptSubstitution = booleanFrom(article, ["accepteSubstitution"]);
+      return [{ product, quantity: integerFrom(article, ["quantite", "quantity"]) ?? 0, ...(acceptSubstitution !== undefined ? { acceptSubstitution } : {}) }];
+    });
+    const view: Order = { id, items };
+    const status = stringFrom(order, ["statutCommande", "status"]);
+    const createdAt = stringFrom(order, ["dateCreation", "createdDate"]);
+    const itemCount = numberFrom(order, ["nbProduits", "itemsNumber"]);
+    const amount = numberFrom(order, ["amount", "montantTotal", "montant"]);
+    if (status) view.status = status;
+    if (createdAt) view.createdAt = createdAt;
+    if (slot) view.slot = { date: stringFrom(slot, ["date"]), start: stringFrom(slot, ["heureDebut"]), end: stringFrom(slot, ["heureFin"]) };
+    if (itemCount !== undefined) view.itemCount = itemCount;
+    if (amount !== undefined) view.amount = amount;
+    return [view];
+  });
+}
+
+/** Keeps only offers with an actual discount; leaflet-only entries (e.g. "PROSPECTUS") carry none. */
+function normalizePromotion(raw: RawObject): Promotion | null {
+  const value = numberFrom(raw, ["valeur", "value"]);
+  const discount = numberFrom(raw, ["remise", "discount"]);
+  if (value === undefined && discount === undefined) return null;
+  const promotion: Promotion = {};
+  const type = stringFrom(raw, ["type"]);
+  const lotQuantity = numberFrom(raw, ["quantiteLot"]);
+  const maxUses = numberFrom(raw, ["maxDeclenchement"]);
+  const category = stringFrom(raw, ["categorie"]);
+  const until = stringFrom(raw, ["dateFin"]);
+  if (type) promotion.type = type;
+  if (value !== undefined) promotion.value = value;
+  if (lotQuantity !== undefined) promotion.lotQuantity = lotQuantity;
+  if (discount !== undefined) promotion.discount = discount;
+  if (maxUses !== undefined) promotion.maxUses = maxUses;
+  if (category) promotion.category = category;
+  if (until) promotion.until = until;
+  return promotion;
 }
 
 function normalizeCartItem(raw: RawObject): CartItem | null {

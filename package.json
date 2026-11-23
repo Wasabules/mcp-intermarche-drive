@@ -6,18 +6,34 @@
   "bin": {
     "mcp-intermarche-drive": "dist/src/index.js"
   },
-  "files": ["dist/src", "docs", "README.md", "LICENSE", "NOTICE"],
+  "files": [
+    "dist/src",
+    "docs",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "test": "npm run build && node --test dist/tests/*.test.js",
     "start": "node dist/src/index.js",
     "smoke": "node scripts/smoke-test.mjs",
-    "smoke:live": "node scripts/live-smoke.mjs"
+    "smoke:live": "node scripts/live-smoke.mjs",
+    "fixtures:record": "node scripts/record-fixtures.mjs"
   },
-  "keywords": ["mcp", "model-context-protocol", "intermarche", "drive", "grocery", "courses"],
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "intermarche",
+    "drive",
+    "grocery",
+    "courses"
+  ],
   "license": "MIT",
-  "engines": {"node": ">=22"},
+  "engines": {
+    "node": ">=22"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.32.0",
     "zod": "4.6.7"

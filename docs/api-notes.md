@@ -224,3 +224,85 @@ Do not increase retries as a response to blocking. The correct recovery is to st
 8. If a release claims live write support, use a disposable basket to add one item, set a quantity, toggle substitution, remove the item, and confirm the final state in the website UI.
 
 Keep raw Intermarché fields inside `src/intermarche/`. MCP handlers should continue to work with the normalized `Product` and `Cart` types rather than importing private API shapes.
+
+
+## Cart API v2 and search changes (observed live, 2026-11-24)
+
+The legacy `POST /api/service/panier/v1/stores/{pdv}/carts?anonymousCartId=…` no longer knows current
+baskets (HTTP 404 `UNKNOWN_CART_ID`). The site's `CartApiIpernova` module now synchronizes with:
+
+```text
+PATCH /api/service/cart/v2/carts/{cartId}?actions=BENEFITS&actions=ANIMATIONS&actions=MEAL_VOUCHERS&storeId={pdv}
+      headers: x-oauth: true                      (signed-in customer)
+PATCH /api/service/cart/v2/anonymous-carts/{cartId}?actions=BENEFITS&actions=ANIMATIONS&storeId={pdv}
+      (anonymous basket)
+both: x-service-name: cart, X-Glm-App-Name: red_fo_desktop, X-Glm-App-Version: 3, cookies only
+```
+
+The body keeps the `customerDateTime` / `events` / `lastSynchronizedCart` shape. The client tries the
+mode that worked last, then the other one on 401/404, so a login or logout in the tab needs no restart.
+Request identifiers (`itm_device_id`, `itm_usid`) are re-read for every request.
+
+**`QUANTITY` is a delta in cart v2**, not the absolute line quantity described above for v1: a line at
+1 that received `quantity: 2` ended at 3 (observed live). The site sends `new − current` (negative to
+decrease). The client keeps absolute targets in its tools, sends the difference from a fresh read, skips
+the write when nothing changes, and stops with an error if the returned quantities differ from the
+targets instead of sending corrective events.
+
+Event types used by the site: `QUANTITY`, `PRODUCT_SUBSTITUTION`, `CART_SUBSTITUTION` (no `itemId`),
+`COMMENT`. A `PRODUCT_SUBSTITUTION` sent in the same batch as the `QUANTITY` event that creates the line
+is ignored: the line takes the basket default. The client checks the response and resends the choice
+alone, then reports any line whose choice still did not stick.
+
+Search: `x-itm-sponsored-page: true` makes the API inject paid placements (`sponsored: true`,
+`sponsorShipTag`) unrelated to the query and ignore `size`; the client no longer sends it and filters
+`sponsored` defensively. Sort values come from the site's constants: `tri` = `pertinence` | `prix` |
+`prixkg`, `ordreTri` = `croissant` | `decroissant`. Price sorts widen the match to loosely related
+products. Useful product fields: `conditionnement` (pack), `pictogrammes[].libelleCategorie` (labels),
+`prixKg` + `unitePrixVente.value`, `poidsNet`, `stock`, `qteMaxPanier`, and `avantages[]`
+(`type`, `valeur`, `quantiteLot`, `remise`, `maxDeclenchement`, `dateFin`; leaflet-only entries carry no
+discount).
+
+
+## Account APIs, slots, filters and basket issues (observed live, 2026-11-24)
+
+All of these go through the page like the other calls. The ones scoped to the customer need
+`x-oauth: true` (without it: HTTP 401); the session cookies (`itm_session`, `itm_usid`) are HttpOnly and
+are sent by the browser. The customer id comes from `persist:auth` → `user.id`. That entry also holds
+the name, e-mail, phone, address and loyalty card, so the client puts a `{customerId}` placeholder in
+the URL and the page substitutes it; nothing from `persist:auth` leaves the page.
+
+```text
+GET  /api/service/consommateur/v1/consommateurs/{id}/listes_courses        → { listesCourse: [{ idListeCourses, libelle, nombreProduits }] }
+POST /api/service/consommateur/v1/consommateurs/{id}/listes_courses/{list}?numero_pdv={pdv}
+     body { filtres: [], page, size, tri: "FAVORIS", ordreTri: "CROISSANT" } → product list (same shape as search)
+GET  /api/service/produits/v2/consommateurs/{id}/produits-favoris?limit=N  → product array
+GET  /api/service/commandes/v2/consommateurs/{id}/commandes?numeroPDV=&historique=true|enCours=true&nombre=&articles=true&withPdv=true
+     → { commandes: [{ numeroCommande, statutCommande, dateCreation, creneauSouhaite{date,heureDebut,heureFin},
+                       nbProduits, articles[{ libelle, marque, quantite, prix, accepteSubstitution, infoProduit }] }] }
+GET  /api/service/delivery/v1/stores/{pdv}/upcoming-time-slots[?customerId={id}]
+     → [{ type, status, date, timeSlot{ startDateTime, endDateTime, id, pricingType, status } }]
+```
+
+The list, favourite and order shapes come from the site's own mappers; the test account had none, so
+they are covered by tests built from those mappers rather than by live fixtures.
+
+Search facets come back in `filtres` as `{ type, id, libelle, nbProduits }`; "Promotions" is
+`{ type: 0, id: 3 }` and is requested as `filtres: [{ type: 0, id: 3 }]`. Products sold by weight have
+`typeProduit.code = "PVI"` and `pviIncrement` grams per ordered unit; their price is an estimate.
+
+The basket response carries `metaData.invalid` (`unavailables`, `stocks`, `partialStocks`,
+`exceededQuantities`, `advantages`, `discounts`) listing flagged lines; the client reports them as
+`issues`.
+
+There is no read-only basket endpoint: the site itself reads the basket with the same empty-event
+`PATCH` (`getCartUsingIdApi`). Experiment: with the server basket at 9 lines, opening the basket page
+made the site sync from its stale local copy (4 lines, events `[]`); the server answered with the full
+9-line basket and the local copy was updated. A stale `lastSynchronizedCart` therefore does not
+overwrite server state; the real risk is a *click* on a stale site view, because quantity events are
+deltas. Hence the basket page refresh after every MCP write.
+
+Sanitized live responses live in `tests/fixtures/` and are re-recorded with
+`npm run fixtures:record -- <cdpPort> <pdvRef>`; the recorder drops tracking, customer, address and
+loyalty keys, replaces UUIDs and the store reference, and refuses to write if any value of
+`persist:auth` appears in the output.
