@@ -77,14 +77,4 @@ jobs:
         run: |
           npm run build
           npm pack --dry-run --json --ignore-scripts > pack.json
-          node --input-type=module -e '
-            import { readFileSync } from "node:fs";
-            const files = JSON.parse(readFileSync("pack.json", "utf8"))[0].files.map((f) => f.path);
-            const missing = ["dist/src/index.js", "dist/src/server.js", "README.md", "LICENSE"].filter((f) => !files.includes(f));
-            const forbidden = files.filter((f) => /^(tests|scripts|src)\/|(^|\/)\.env|\.log$/.test(f));
-            console.log(`${files.length} fichiers dans le paquet`);
-            if (missing.length || forbidden.length) {
-              console.error({ missing, forbidden });
-              process.exit(1);
-            }
-          '
+          node scripts/check-pack.mjs pack.json

@@ -111,6 +111,7 @@ jobs:
           git fetch --no-tags upstream "$UPSTREAM_BRANCH"
           commits=$(git log --format='- %h %s (%an)' "HEAD..upstream/$UPSTREAM_BRANCH")
           if [ "$CONFLICT" = "true" ]; then
+            # shellcheck disable=SC2016 # the backticks are Markdown code, not command substitution
             printf 'Le projet d'"'"'origine a %s nouveau(x) commit(s) qui entrent en conflit avec ce fork.\n\n%s\n\nÀ fusionner à la main : `git fetch upstream && git merge upstream/%s`, puis `npm test`, `npm run smoke` et un `self_test` en réel.\n\nDétection : %s\n' \
               "$BEHIND" "$commits" "$UPSTREAM_BRANCH" "$RUN_URL" > body.md
             gh issue create --title "Upstream : $BEHIND commit(s) en conflit ($UPSTREAM_SHA)" --body-file body.md --label upstream-sync
@@ -123,6 +124,7 @@ jobs:
           git merge --no-ff --no-edit "upstream/$UPSTREAM_BRANCH"
           git push origin "$branch"
           if [ "$TEST_RESULT" = "success" ]; then verdict="✅ typage, tests et smoke test passent sur la fusion"; else verdict="❌ la suite échoue sur la fusion : voir les journaux"; fi
+          # shellcheck disable=SC2016 # the backticks are Markdown code, not command substitution
           printf '%s nouveau(x) commit(s) du projet d'"'"'origine.\n\n%s\n\n**Tests :** %s (%s).\n\nUne PR ouverte par GitHub Actions ne relance pas la CI : les tests ci-dessus ont tourné dans ce workflow, sur cette fusion exacte.\n\nAvant de fusionner : relire le diff, puis lancer `self_test` en réel après `/mcp` → Reconnect.\n' \
             "$BEHIND" "$commits" "$verdict" "$RUN_URL" > body.md
           gh pr create --base "$BASE" --head "$branch" --title "Sync upstream : $BEHIND commit(s) ($UPSTREAM_SHA)" --body-file body.md --label upstream-sync
