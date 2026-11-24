@@ -56,7 +56,7 @@ The full design review is in [`docs/design-review.md`](docs/design-review.md). U
 | Tool | Reads or writes | Contract |
 | --- | --- | --- |
 | `browser_status` | Read | Reports CDP state, active store reference, delivery mode, whether a basket id was found, and visible DataDome action required. |
-| `search_product` | Read | Searches the active store. Sponsored placements are always dropped, out-of-stock products unless `available_only=false`; `promotions_only` keeps offers only. `sort` = `relevance`, `price` or `unit_price` (server-side). Each product carries `packaging`, `unitPrice`, `labels`, current `promotions`, `promoUnitPrice` for lot offers, `estimatedPrice`/`gramsPerUnit` when sold by weight, `maxPerOrder` and `lowStock`; no image URL or EAN. |
+| `search_product` | Read | Searches the active store. Sponsored placements are always dropped, out-of-stock products unless `available_only=false`; `promotions_only` keeps offers only. `sort` = `relevance`, `price` or `unit_price` (server-side). Each product carries `packaging`, `unitPrice`, `labels`, current `promotions`, `promoUnitPrice` for lot offers, `estimatedPrice`/`gramsPerUnit` when sold by weight, `maxPerOrder`, `lowStock` and the EAN (for quality look-ups); no image URL. |
 | `get_cart` | Read | Complete basket: lines, per-line and basket-wide substitution state, total, and `issues` Intermarché reports (unavailable, short stock, over the maximum). |
 | `add_items` | Write | Adds several products in one synchronization (one read, one write, one substitution follow-up when needed). Substitutions default to `false`. Returns only the touched lines and totals. |
 | `add_to_cart` | Write | Same as `add_items` for one product. |
@@ -227,6 +227,28 @@ Close extra Intermarché tabs in the dedicated profile. Remove a stale `INTERMAR
 ### Chromium reports that the profile is already in use
 
 Reuse the already-running CDP instance on the configured port, or close that dedicated Chromium process before starting another one. Do not reuse the same profile directory from two browser processes.
+
+## Companion skills
+
+`skills/` ships two Claude Code skills that carry the know-how the tools cannot: what to check, in
+which order, and what went wrong before. They are written in English with French trigger phrases.
+
+| Skill | Use |
+| --- | --- |
+| `intermarche-shopping` | Safe and efficient shopping with these tools: `self_test` first, read `packaging` (never infer a pack size from a price), compare unit prices, shelf life, one `add_items` call, substitutions refused, warnings and issues reported, stop on DataDome. |
+| `weekly-meal-plan` | Simple balanced weekly menus built around the current basket (portions, cooking order by shelf life, leftovers, shopping list), then hand-off to `intermarche-shopping`. |
+
+Install them for your user (they follow the repository when you pull):
+
+```bash
+mkdir -p ~/.claude/skills
+ln -s "$PWD/skills/intermarche-shopping" ~/.claude/skills/intermarche-shopping
+ln -s "$PWD/skills/weekly-meal-plan" ~/.claude/skills/weekly-meal-plan
+```
+
+The meal planner reads the person's profile (age, height, weight, activity, goal) from Claude's
+memory or asks for it. Keep that data there: the skills and this repository must stay free of personal
+data, and `tests/skills.test.ts` checks it.
 
 ## CI/CD
 

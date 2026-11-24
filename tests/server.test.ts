@@ -19,10 +19,10 @@ const eggs: Product = {
   promotions: [{ type: "PCT", value: 50, lotQuantity: 2, discount: 1.23, maxUses: 6, until: "2026-11-29T22:59:59Z" }],
 };
 
-test("product view drops image and EAN and keeps what drives a choice", () => {
+test("product view drops the image but keeps the EAN and what drives a choice", () => {
   const view = productView(eggs) as Record<string, unknown>;
   assert.equal(view.imageUrl, undefined);
-  assert.equal(view.ean, undefined);
+  assert.equal(view.ean, "3251320080617");
   assert.equal(view.packaging, "la boîte de 6 œufs");
   assert.equal(view.unitPrice, "2,46 €/Unité");
   assert.equal(view.lowStock, 3);
@@ -59,6 +59,7 @@ test("change view returns only touched lines, marks removed ones, and keeps warn
       {
         id: "19532",
         label: "Œufs fermiers Label Rouge",
+        ean: "3251320080617",
         packaging: "la boîte de 6 œufs",
         quantity: 2,
         price: 2.46,

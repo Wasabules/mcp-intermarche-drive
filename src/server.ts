@@ -320,12 +320,16 @@ function jsonReplacer(_key: string, value: unknown): unknown {
   return value;
 }
 
-/** Search result entry without image URL and EAN, which cost tokens and never inform a choice. */
+/**
+ * Search result entry without the image URL (long, never informs a choice). The EAN stays: it is
+ * short and lets a quality check (e.g. Open Food Facts) look the product up.
+ */
 export function productView(product: Product) {
   return {
     id: product.id,
     label: product.label,
     brand: product.brand,
+    ...(product.ean ? { ean: product.ean } : {}),
     ...(product.packaging ? { packaging: product.packaging } : {}),
     price: product.price,
     ...(product.pricePerUnit ? { unitPrice: product.pricePerUnit } : {}),
@@ -427,6 +431,7 @@ function lineView(item: CartItem) {
   return {
     id: item.product.id,
     label: item.product.label,
+    ...(item.product.ean ? { ean: item.product.ean } : {}),
     ...(item.product.packaging ? { packaging: item.product.packaging } : {}),
     quantity: item.quantity,
     price: item.product.price,

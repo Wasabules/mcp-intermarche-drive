@@ -6,7 +6,15 @@ import { readFileSync } from "node:fs";
 
 const report = JSON.parse(readFileSync(process.argv[2] ?? "pack.json", "utf8"));
 const files = report[0].files.map((file) => file.path);
-const required = ["dist/src/index.js", "dist/src/server.js", "README.md", "LICENSE", "NOTICE"];
+const required = [
+  "dist/src/index.js",
+  "dist/src/server.js",
+  "skills/intermarche-shopping/SKILL.md",
+  "skills/weekly-meal-plan/SKILL.md",
+  "README.md",
+  "LICENSE",
+  "NOTICE",
+];
 const missing = required.filter((file) => !files.includes(file));
 const forbidden = files.filter((file) => /^(tests|scripts|src)\/|(^|\/)\.env|\.log$/.test(file));
 
